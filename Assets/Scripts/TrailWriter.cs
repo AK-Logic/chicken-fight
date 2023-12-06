@@ -108,5 +108,59 @@ public class TrailWriter : MonoBehaviour
         {
             trailObjects[i].SetActive(false);
         }
+
+        trailIndex = 0;
+    }
+
+
+    public void FillArea()
+    {
+        // Only fill the area if there are enough trail points
+        if (trailIndex >= 3)
+        {
+            // Create a new game object for the filled area
+            GameObject filledArea = new GameObject("FilledArea");
+            filledArea.transform.position = Vector3.zero; // Adjust as needed
+
+            // Add a MeshFilter and MeshRenderer to the filled area game object
+            MeshFilter meshFilter = filledArea.AddComponent<MeshFilter>();
+            MeshRenderer meshRenderer = filledArea.AddComponent<MeshRenderer>();
+
+            // Create a mesh for the filled area
+            Mesh filledMesh = new Mesh();
+
+            // Set the vertices of the mesh to be the trail points
+            Vector3[] vertices = new Vector3[trailIndex];
+            for (int i = 0; i < trailIndex; i++)
+            {
+                vertices[i] = trailObjects[i].transform.position;
+            }
+
+            // Set the triangles of the mesh to create a polygon
+            int[] triangles = new int[(trailIndex - 2) * 3];
+            for (int i = 0, j = 0; i < triangles.Length; i += 3, j++)
+            {
+                triangles[i] = 0;
+                triangles[i + 1] = j + 1;
+                triangles[i + 2] = j + 2;
+            }
+
+            // Set the mesh properties
+            filledMesh.vertices = vertices;
+            filledMesh.triangles = triangles;
+
+            // Assign the filled mesh to the MeshFilter
+            meshFilter.mesh = filledMesh;
+
+            // Set the material of the filled area (you can adjust the material as needed)
+            meshRenderer.material = new Material(Shader.Find("Standard"));
+
+            // Optionally, adjust the color of the filled area
+            meshRenderer.material.color = Color.green; // Change the color as needed
+
+            // Optionally, set the sorting layer and order to ensure it's rendered correctly
+            meshRenderer.sortingLayerName = "Foreground"; // Change the sorting layer as needed
+            meshRenderer.sortingOrder = 1; // Change the sorting order as needed
+        }
     }
 }
