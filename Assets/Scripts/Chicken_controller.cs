@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class chicken_controller : MonoBehaviour
 {
-    [SerializeField] private float movementSpeed = 1.0f;
+    [SerializeField] private float movementSpeed = 5.0f;
     private Vector2 movement;
     private Animator animator;
     void Start()
