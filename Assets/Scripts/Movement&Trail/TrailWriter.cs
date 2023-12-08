@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TrailWriter : MonoBehaviour
 {
-    [SerializeField] private float movementSpeed = 1.0f;
+    [SerializeField] private float inputMovementSpeed = 0.2f;
     private Vector2 movement;
     private Animator animator;
 
@@ -16,6 +16,9 @@ public class TrailWriter : MonoBehaviour
     private int trailIndex = 0;
     private Vector3 lastCharacterPosition;
     private float distanceCheckTimer = 0f;
+
+ // Keeps track of last movement to not switch directions
+    private Vector2 lastNonZeroMovement = Vector2.zero;
 
     // Added variable for character transform
     public Transform characterTransform;
@@ -62,16 +65,60 @@ public class TrailWriter : MonoBehaviour
             lastCharacterPosition = characterTransform.position;
             distanceCheckTimer = 0f; // Reset the timer
         }
-
-        // Your existing movement logic
-        movement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        animator.SetFloat("Speed", Mathf.Abs(movement.magnitude * movementSpeed));
-
-        bool flipped = movement.x > 0;
-        this.transform.rotation = Quaternion.Euler(new Vector3(0f, flipped ? 180 : 0f, 0f));
     }
 
-    private void FixedUpdate()
+private void FixedUpdate()
+{
+    float gridCellSize = 0.5f; // Adjust this based on your grid size
+
+    // Stores input
+    Vector2 inputMovement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+    
+    // Animator
+    animator.SetFloat("Speed", Mathf.Abs(inputMovement.magnitude * inputMovementSpeed));
+    bool flipped = inputMovement.x > 0;
+    this.transform.rotation = Quaternion.Euler(new Vector3(0f, flipped ? 180 : 0f, 0f));
+
+        // Additional movement restrictions
+    if (Mathf.Abs(inputMovement.x) > 0.1f)
+    {
+        // If moving horizontally, set vertical input to 0
+        inputMovement.y= 0f;
+    }
+
+    if (Mathf.Abs(inputMovement.y) > 0.1f)
+    {
+        // If moving vertically, set horizontal input to 0
+        inputMovement.x = 0f;
+    }
+
+     /* AK Comment:
+     This code below stops the chicken from 
+     from turning back the opposite direction it came from.
+     It also makes it so that the player wont stop after pressing -> once
+     Must delete this line under when uncommenting the code:  lastNonZeroMovement = inputMovement;*/ 
+
+     /* Basically, this is the logic we need, but i want it disabled from now
+     since it makes testing more annoying*/ 
+    lastNonZeroMovement = inputMovement;
+  /*  if (inputMovement != Vector2.zero)
+    {
+        if (Vector2.Dot(inputMovement, lastNonZeroMovement) == 0)
+        {
+            lastNonZeroMovement = inputMovement;
+        }
+    }*/
+
+    // Round the input to the nearest grid cell
+    float xMovement = Mathf.Round(lastNonZeroMovement.x) * gridCellSize;
+    float yMovement = Mathf.Round(lastNonZeroMovement.y) * gridCellSize;
+    // Move the character in grid steps
+    transform.Translate(new Vector3(xMovement, yMovement, 0), Space.World);
+}
+
+ /*   THIS IS KENS ORIGINAL MOVEMENT LOGIC - NON GRID FORM
+ 
+ private void FixedUpdate()
     {
         var xMovement = movement.x * movementSpeed * Time.deltaTime;
         var yMovement = movement.y * movementSpeed * Time.deltaTime;
@@ -85,6 +132,7 @@ public class TrailWriter : MonoBehaviour
             this.transform.Translate(new Vector3(0, yMovement), Space.World);
         }
     }
+    */
 
     // Added method to get the index of a specific trail object
     public int GetTrailIndex(GameObject trailObject)
