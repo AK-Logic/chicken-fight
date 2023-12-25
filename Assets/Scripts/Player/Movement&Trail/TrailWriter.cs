@@ -11,7 +11,7 @@ public class TrailWriter : MonoBehaviour
     private Animator animator;
 
     // Trail variables
-    public int trailPoints = 50; // Adjust the number of points in the trail
+    public int trailPoints = 50; // Adjust the number of points in trail
     public float trailWidth = 0.1f; // Adjust the width of the trail
     public float distanceThreshold = 0.1f; // Adjust the distance threshold for adding points
     public float checkInterval = 0.1f; // Adjust the interval for checking the specified distance
