@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class TrailWriter : MonoBehaviour
 {
-    [SerializeField] private float inputMovementSpeed = 0.2f;
+    [SerializeField] private float inputMovementSpeed = 1f;
 
     private float gridCellSize;
 
@@ -27,6 +27,9 @@ public class TrailWriter : MonoBehaviour
     // Added variable for character transform
     public Transform characterTransform;
 
+    // Added variable for spawn point, this matters since grid movement is based on unit movements, doesnt actually detect squares
+    public Transform spawnPoint;
+
     // Grab the Grid Cell Size from the Grid Generator Script
         public void SetGridCellSize(float size)
     {
@@ -36,6 +39,9 @@ public class TrailWriter : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
+
+        // Set the initial position to the spawn point
+        characterTransform.position = spawnPoint.position;
 
         // Trail initialization
         trailObjects = new GameObject[trailPoints];
@@ -81,6 +87,8 @@ public class TrailWriter : MonoBehaviour
         }
     }
 
+
+private Vector3 lastRoundedPosition;
 private void FixedUpdate()
 {
     // Stores input
@@ -117,11 +125,28 @@ private void FixedUpdate()
     }
 
     // Round the input to the nearest grid cell
-    float xMovement = Mathf.Round(lastNonZeroMovement.x) * gridCellSize;
-    float yMovement = Mathf.Round(lastNonZeroMovement.y) * gridCellSize;
+    float xMovement = lastNonZeroMovement.x * inputMovementSpeed * gridCellSize;
+    float yMovement = lastNonZeroMovement.y * inputMovementSpeed * gridCellSize;
+
     // Move the character in grid steps
     transform.Translate(new Vector3(xMovement, yMovement, 0), Space.World);
+
+    // Round the position to the nearest grid cell after movement
+    float newX = Mathf.Round(transform.position.x / gridCellSize) * gridCellSize;
+    float newY = Mathf.Round(transform.position.y  / gridCellSize) * gridCellSize;
+
+
+    // Ensure the new position is different from the last rounded position
+    if (newX != lastRoundedPosition.x || newY != lastRoundedPosition.y)
+    {
+        // Set the new rounded position
+        transform.position = new Vector3(newX, newY);
+
+        // Update the last rounded position
+        lastRoundedPosition = transform.position;
+    }
 }
+
 
  /*   THIS IS KENS ORIGINAL MOVEMENT LOGIC - NON GRID FORM
  
