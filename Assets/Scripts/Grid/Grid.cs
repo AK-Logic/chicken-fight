@@ -39,10 +39,10 @@ public class GridGenerator : MonoBehaviour
         Vector3 bottomLeft = new Vector3(0, 0, 0);
 
         // Create borders using the fencePrefab
-        CreateBorder(bottomLeft, gridWidth, 1);
-        CreateBorder(bottomLeft + new Vector3(0, (gridHeight - 1) * gridCellSize, 0), gridWidth, 1);
-        CreateBorder(bottomLeft, 1, gridHeight);
-        CreateBorder(bottomLeft + new Vector3((gridWidth - 1) * gridCellSize, 0, 0), 1, gridHeight);
+        CreateBorder(bottomLeft, gridWidth + 2, 1);
+        CreateBorder(bottomLeft + new Vector3(0, (gridHeight + 1) * gridCellSize, 0), gridWidth + 2, 1);
+        CreateBorder(bottomLeft, 1, gridHeight + 1);
+        CreateBorder(bottomLeft + new Vector3((gridWidth + 1) * gridCellSize, 0, 0), 1, gridHeight + 1);
 
 
         for (int x = 0; x < gridWidth; x++)
