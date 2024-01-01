@@ -5,9 +5,11 @@ public class GridGenerator : MonoBehaviour
     [SerializeField] private int gridWidth = 50;
     [SerializeField] private int gridHeight = 50;
     [SerializeField] private GameObject squarePrefab;
+    [SerializeField] private GameObject fencePrefab;
     [SerializeField] private Color evenSquareColor = Color.white;
     [SerializeField] private Color oddSquareColor = Color.gray;
-    [SerializeField] private string squareSortingLayer = "Default"; // Adjust as needed
+    [SerializeField] private string squareSortingLayer = "Default"; // Adjust as needed[]
+    [SerializeField] private string fenceSortingLayer = "Default";
 
     [Header("Grid Settings")]
     [SerializeField] private float gridCellSize = 1f;  // Set your default value here
@@ -34,7 +36,14 @@ public class GridGenerator : MonoBehaviour
             trailWriter.SetGridCellSize(gridCellSize);
         }
 
-        Vector3 bottomLeft = mainCamera.ViewportToWorldPoint(new Vector3(0, 0, mainCamera.nearClipPlane));
+        Vector3 bottomLeft = new Vector3(0, 0, 0);
+
+        // Create borders using the fencePrefab
+        CreateBorder(bottomLeft, gridWidth, 1);
+        CreateBorder(bottomLeft + new Vector3(0, (gridHeight - 1) * gridCellSize, 0), gridWidth, 1);
+        CreateBorder(bottomLeft, 1, gridHeight);
+        CreateBorder(bottomLeft + new Vector3((gridWidth - 1) * gridCellSize, 0, 0), 1, gridHeight);
+
 
         for (int x = 0; x < gridWidth; x++)
         {
@@ -57,8 +66,35 @@ public class GridGenerator : MonoBehaviour
                 boxCollider.isTrigger = true;
 
                 // Set the name of the square based on its coordinates
-                square.name = $"Square ({x + 1}, {y + 1})";
+                square.name = $"Square ({x}, {y + 1})";
             }
         }
     }
+    private void CreateBorder(Vector3 position, int gridWidth, int gridHeight)
+    {
+        for (int x = 0; x < gridWidth; x++)
+        {
+            for (int y = 0; y < gridHeight; y++)
+            {
+                // Calculate spawn position for the fence
+                Vector3 spawnPosition = new Vector3(position.x + (x - 1) * gridCellSize, position.y + (y - 1) * gridCellSize, 0);
+
+                // Instantiate the fence prefab
+                GameObject fence = Instantiate(fencePrefab, spawnPosition, Quaternion.identity);
+
+                // Set the name of the fence based on its coordinates
+                fence.name = $"Fence ({x + 1}, {y + 1})";
+
+                //
+                fence.GetComponent<Renderer>().sortingLayerName = fenceSortingLayer;
+                fence.GetComponent<Renderer>().sortingOrder = 1;
+
+
+                // Add Box Collider 2D to the fence
+                BoxCollider2D boxCollider = fence.AddComponent<BoxCollider2D>();
+                boxCollider.isTrigger = true;
+            }
+        }
+    }
+
 }
