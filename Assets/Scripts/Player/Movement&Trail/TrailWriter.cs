@@ -73,8 +73,10 @@ public class TrailWriter : MonoBehaviour
         {
             if (Vector3.Distance(characterTransform.position, lastCharacterPosition) > distanceThreshold)
             {
-                // Set the position of the trail object
-                trailObjects[trailIndex].transform.position = characterTransform.position;
+                // Set the position of the trail object to the nearest grid position
+                Vector3 nearestGridPosition = GetNearestGridPosition(characterTransform.position);
+                trailObjects[trailIndex].transform.position = nearestGridPosition;
+
                 trailObjects[trailIndex].SetActive(true);
                 trailObjects[trailIndex].GetComponent<TrailColliderScript>().SetTimestamp(Time.time);
 
@@ -85,6 +87,14 @@ public class TrailWriter : MonoBehaviour
             lastCharacterPosition = characterTransform.position;
             distanceCheckTimer = 0f; // Reset the timer
         }
+    }
+
+    // Round the input to the nearest grid cell
+    private Vector3 GetNearestGridPosition(Vector3 position)
+    {
+        float newX = Mathf.Round(position.x / gridCellSize) * gridCellSize;
+        float newY = Mathf.Round(position.y / gridCellSize) * gridCellSize;
+        return new Vector3(newX, newY, position.z);
     }
 
 
