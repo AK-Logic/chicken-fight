@@ -19,7 +19,6 @@ public class TrailWriter : MonoBehaviour
     private GameObject[] trailObjects;
     private int trailIndex = 0;
     private Vector3 lastCharacterPosition;
-    private float distanceCheckTimer = 0f;
 
  // Keeps track of last movement to not switch directions
     private Vector2 lastNonZeroMovement = Vector2.zero;
@@ -65,29 +64,7 @@ public class TrailWriter : MonoBehaviour
     }
 
     void Update()
-    {
-        // Check for the specified distance every x milliseconds
-        distanceCheckTimer += Time.deltaTime;
-
-        if (distanceCheckTimer >= checkInterval)
-        {
-            if (Vector3.Distance(characterTransform.position, lastCharacterPosition) > distanceThreshold)
-            {
-                // Set the position of the trail object to the nearest grid position
-                Vector3 nearestGridPosition = GetNearestGridPosition(characterTransform.position);
-                trailObjects[trailIndex].transform.position = nearestGridPosition;
-
-                trailObjects[trailIndex].SetActive(true);
-                trailObjects[trailIndex].GetComponent<TrailColliderScript>().SetTimestamp(Time.time);
-
-                // Increment the trail index
-                trailIndex = (trailIndex + 1) % trailPoints;
-            }
-
-            lastCharacterPosition = characterTransform.position;
-            distanceCheckTimer = 0f; // Reset the timer
-        }
-    }
+    {}
 
     // Round the input to the nearest grid cell
     private Vector3 GetNearestGridPosition(Vector3 position)
@@ -99,21 +76,21 @@ public class TrailWriter : MonoBehaviour
 
 
 private Vector3 lastRoundedPosition;
-private void FixedUpdate()
+void FixedUpdate()
 {
     // Stores input
     Vector2 inputMovement = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-    
+
     // Animator
     animator.SetFloat("Speed", Mathf.Abs(inputMovement.magnitude * inputMovementSpeed));
     bool flipped = inputMovement.x > 0;
     this.transform.rotation = Quaternion.Euler(new Vector3(0f, flipped ? 180 : 0f, 0f));
 
-        // Additional movement restrictions
+    // Additional movement restrictions
     if (Mathf.Abs(inputMovement.x) > 0.1f)
     {
         // If moving horizontally, set vertical input to 0
-        inputMovement.y= 0f;
+        inputMovement.y = 0f;
     }
 
     if (Mathf.Abs(inputMovement.y) > 0.1f)
@@ -122,9 +99,9 @@ private void FixedUpdate()
         inputMovement.x = 0f;
     }
 
-     /* AK Comment:
-     This code below stops the chicken from 
-     from turning back the opposite direction it came from.*/
+    /* AK Comment:
+    This code below stops the chicken from 
+    from turning back the opposite direction it came from.*/
 
     if (inputMovement != Vector2.zero)
     {
@@ -143,8 +120,7 @@ private void FixedUpdate()
 
     // Round the position to the nearest grid cell after movement
     float newX = Mathf.Round(transform.position.x / gridCellSize) * gridCellSize;
-    float newY = Mathf.Round(transform.position.y  / gridCellSize) * gridCellSize;
-
+    float newY = Mathf.Round(transform.position.y / gridCellSize) * gridCellSize;
 
     // Ensure the new position is different from the last rounded position
     if (newX != lastRoundedPosition.x || newY != lastRoundedPosition.y)
@@ -154,8 +130,19 @@ private void FixedUpdate()
 
         // Update the last rounded position
         lastRoundedPosition = transform.position;
+
+        // Set the position of the trail object to the nearest grid position
+        Vector3 nearestGridPosition = GetNearestGridPosition(transform.position);
+        trailObjects[trailIndex].transform.position = nearestGridPosition;
+
+        trailObjects[trailIndex].SetActive(true);
+        trailObjects[trailIndex].GetComponent<TrailColliderScript>().SetTimestamp(Time.time);
+
+        // Increment the trail index
+        trailIndex = (trailIndex + 1) % trailPoints;
     }
 }
+
 
 
  /*   THIS IS KENS ORIGINAL MOVEMENT LOGIC - NON GRID FORM

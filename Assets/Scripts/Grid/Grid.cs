@@ -12,7 +12,7 @@ public class GridGenerator : MonoBehaviour
     [SerializeField] private string fenceSortingLayer = "Default";
 
     [Header("Grid Settings")]
-    [SerializeField] private float gridCellSize = 1f;  // Set your default value here
+    [SerializeField] public static float gridCellSize = 1f;  // Set your default value here
 
     private void Start()
     {
