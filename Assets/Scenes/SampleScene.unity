@@ -381,7 +381,6 @@ MonoBehaviour:
   oddSquareColor: {r: 0.9339623, g: 0.79481095, b: 0.4273318, a: 1}
   squareSortingLayer: Default
   fenceSortingLayer: 10
-  gridCellSize: 1
 --- !u!4 &737741371
 Transform:
   m_ObjectHideFlags: 0
@@ -413,6 +412,7 @@ GameObject:
   - component: {fileID: 1134259169}
   - component: {fileID: 1134259170}
   - component: {fileID: 1134259171}
+  - component: {fileID: 1134259172}
   m_Layer: 0
   m_Name: chicken
   m_TagString: Untagged
@@ -667,6 +667,24 @@ PolygonCollider2D:
       - {x: 0.16, y: 0.06}
       - {x: 0.12, y: 0.14999999}
   m_UseDelaunayMesh: 0
+--- !u!114 &1134259172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134259161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32511d6d328b647e39a78ad9a8d757be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  initialAreaSize: 3
+  initialSquareColor: {r: 1, g: 0.20610881, b: 0.015686274, a: 1}
+  squareLayer:
+    serializedVersion: 2
+    m_Bits: 1
+  gridLineMaterial: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
