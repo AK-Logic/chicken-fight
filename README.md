@@ -1,3 +1,5 @@
+This game is a re-make of PaperIO/LandIO with a twist.
+
 
 **PLAYER MOVEMENT**
 Grid Movement is setup, the way it works is, it takes the input and scales it by the serialized speed field. And then it rounds it the nearest GridSquareSize and actually moves it again
